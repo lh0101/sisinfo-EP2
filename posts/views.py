@@ -5,7 +5,7 @@ from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.forms import UserCreationForm
 from django.core.exceptions import PermissionDenied
-from .models import Post, Comment
+from .models import Post, Comment, Category
 
 # View para registro de usuários
 def register(request):
@@ -28,13 +28,23 @@ class CommentCreateView(LoginRequiredMixin, View):
         Comment.objects.create(post=post, author=request.user, text=text)
         return redirect('post_detail', pk=post_id)
 
+# View para listar categorias (página inicial)
+def category_list(request):
+    categories = Category.objects.all()
+    return render(request, 'posts/category_list.html', {'categories': categories})
+
+# View para detalhes de uma categoria
+def category_detail(request, pk):
+    category = get_object_or_404(Category, pk=pk)
+    posts = category.posts.all()
+    return render(request, 'posts/posts_list.html', {'posts': posts, 'category': category})
 
 # View para listar posts
 class PostListView(ListView):
     model = Post
     template_name = 'posts/posts_list.html'
     context_object_name = 'posts'
-    ordering = ['-post_date']  # Ordena por data de postagem, mais recente primeiro
+    ordering = ['-created_at']  # Ordena por data de criação, mais recente primeiro
 
 # View para detalhes de um post
 class PostDetailView(DetailView):
@@ -50,31 +60,29 @@ class PostDetailView(DetailView):
         context['can_edit_post'] = user.is_authenticated and (user == post.author or user.has_perm('posts.can_manage_all_posts'))
         context['can_delete_post'] = user.is_authenticated and (user == post.author or user.has_perm('posts.can_manage_all_posts'))
 
+        # Adicionar categorias do post no contexto
+        context['categories'] = post.categories.all()
+
         # Adicionar comentários ordenados no contexto
         context['comments'] = post.comments.all().order_by('-created_at')
         return context
-
-
-
-
 
 # View para criação de posts
 class PostCreateView(LoginRequiredMixin, CreateView):
     model = Post
     template_name = 'posts/post_form.html'
-    fields = ['title', 'content']
-    success_url = reverse_lazy('posts_list')
+    fields = ['title', 'content', 'categories']  # Inclui categorias no formulário
+    success_url = reverse_lazy('category_list')
 
     def form_valid(self, form):
         form.instance.author = self.request.user  # Associa o post ao usuário logado
         return super().form_valid(form)
- # Redireciona para a lista após criar
 
 # View para atualização de posts
 class PostUpdateView(UpdateView):
     model = Post
     template_name = 'posts/post_form.html'
-    fields = ['title', 'content']
+    fields = ['title', 'content', 'categories']  # Permite editar categorias
 
     def dispatch(self, request, *args, **kwargs):
         post = self.get_object()
@@ -86,7 +94,7 @@ class PostUpdateView(UpdateView):
 class PostDeleteView(DeleteView):
     model = Post
     template_name = 'posts/post_confirm_delete.html'
-    success_url = reverse_lazy('posts_list')
+    success_url = reverse_lazy('category_list')
 
     def dispatch(self, request, *args, **kwargs):
         post = self.get_object()
