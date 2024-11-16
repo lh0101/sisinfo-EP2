@@ -1,39 +1,35 @@
-from django.shortcuts import render, get_object_or_404, redirect
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.urls import reverse_lazy
 from .models import Post
-from .forms import PostForm
 
-def posts_list(request):
-    posts = Post.objects.all().order_by('-post_date')
-    return render(request, 'posts/posts_list.html', {'posts': posts})
+# ListView: Exibe a lista de posts
+class PostListView(ListView):
+    model = Post
+    template_name = 'posts/posts_list.html'
+    context_object_name = 'posts'
+    ordering = ['-post_date']
 
-def post_detail(request, post_id):
-    post = get_object_or_404(Post, id=post_id)
-    return render(request, 'posts/post_detail.html', {'post': post})
+# DetailView: Exibe os detalhes de um post
+class PostDetailView(DetailView):
+    model = Post
+    template_name = 'posts/post_detail.html'
 
-def post_create(request):
-    if request.method == 'POST':
-        form = PostForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('posts_list')
-    else:
-        form = PostForm()
-    return render(request, 'posts/post_form.html', {'form': form})
+# CreateView: Cria um novo post
+class PostCreateView(CreateView):
+    model = Post
+    template_name = 'posts/post_form.html'
+    fields = ['title', 'content']
+    success_url = reverse_lazy('posts_list')
 
-def post_edit(request, post_id):
-    post = get_object_or_404(Post, id=post_id)
-    if request.method == 'POST':
-        form = PostForm(request.POST, instance=post)
-        if form.is_valid():
-            form.save()
-            return redirect('post_detail', post_id=post.id)
-    else:
-        form = PostForm(instance=post)
-    return render(request, 'posts/post_form.html', {'form': form})
+# UpdateView: Edita um post existente
+class PostUpdateView(UpdateView):
+    model = Post
+    template_name = 'posts/post_form.html'
+    fields = ['title', 'content']
+    success_url = reverse_lazy('posts_list')
 
-def post_delete(request, post_id):
-    post = get_object_or_404(Post, id=post_id)
-    if request.method == 'POST':
-        post.delete()
-        return redirect('posts_list')  # Redireciona para a lista de posts
-    return render(request, 'posts/post_confirm_delete.html', {'post': post})
+# DeleteView: Deleta um post (com página de confirmação)
+class PostDeleteView(DeleteView):
+    model = Post
+    template_name = 'posts/post_confirm_delete.html'
+    success_url = reverse_lazy('posts_list')
