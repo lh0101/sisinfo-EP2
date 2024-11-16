@@ -1,15 +1,10 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>{% if post %}Editar{% else %}Criar{% endif %} Post</h2>
+<h2>{% if form.instance.pk %}Editar{% else %}Criar{% endif %} Post</h2>
 <form method="POST">
     {% csrf_token %}
-    <label for="title">Título:</label>
-    <input type="text" id="title" name="title" value="{{ post.title|default:'' }}">
-    <br>
-    <label for="content">Conteúdo:</label>
-    <textarea id="content" name="content">{{ post.content|default:'' }}</textarea>
-    <br>
+    {{ form.as_p }}
     <button type="submit" class="btn btn-primary">Salvar</button>
 </form>
 {% endblock %}

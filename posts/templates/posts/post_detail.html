@@ -6,7 +6,7 @@
 <p>Publicado em: {{ post.post_date|date:"d/m/Y H:i" }}</p>
 
 <div>
-    <a href="{% url 'post_edit' post.id %}" class="btn btn-primary">Editar</a>
-    <a href="{% url 'post_delete' post.id %}" class="btn btn-danger">Deletar</a>
+    <a href="{% url 'post_edit' post.pk %}" class="btn btn-primary">Editar</a>
+    <a href="{% url 'post_delete' post.pk %}" class="btn btn-danger">Deletar</a>
 </div>
 {% endblock %}

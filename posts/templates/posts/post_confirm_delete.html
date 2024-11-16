@@ -6,6 +6,6 @@
 <form method="POST">
     {% csrf_token %}
     <button type="submit" class="btn btn-danger">Excluir</button>
-    <a href="{% url 'post_detail' post.id %}" class="btn btn-secondary">Cancelar</a>
+    <a href="{% url 'post_detail' post.pk %}" class="btn btn-secondary">Cancelar</a>
 </form>
 {% endblock %}
