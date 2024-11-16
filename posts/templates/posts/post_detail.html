@@ -1,6 +1,13 @@
 {% extends 'base.html' %}
+
 {% block content %}
 <h2>{{ post.title }}</h2>
 <p>{{ post.content|safe }}</p>
 <p>Publicado em: {{ post.post_date|date:"d/m/Y H:i" }}</p>
+
+<!-- Botões de Editar e Deletar -->
+<div>
+    <a href="{% url 'post_edit' post.id %}" class="btn btn-primary">Editar</a>
+    <a href="{% url 'post_delete' post.id %}" class="btn btn-danger">Deletar</a>
+</div>
 {% endblock %}
