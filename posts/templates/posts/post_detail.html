@@ -3,10 +3,42 @@
 {% block content %}
 <h2>{{ post.title }}</h2>
 <p>{{ post.content|safe }}</p>
-<p>Publicado em: {{ post.post_date|date:"d/m/Y H:i" }}</p>
+<p>Publicado por {{ post.author.username }} em {{ post.post_date|date:"d/m/Y H:i" }}</p>
 
-<div>
-    <a href="{% url 'post_edit' post.pk %}" class="btn btn-primary">Editar</a>
-    <a href="{% url 'post_delete' post.pk %}" class="btn btn-danger">Deletar</a>
-</div>
+<hr>
+
+<!-- Exibe os botões apenas se o usuário tiver permissão -->
+{% if can_edit_post or can_delete_post %}
+    <div>
+        {% if can_edit_post %}
+            <a href="{% url 'post_edit' post.pk %}" class="btn btn-primary">Editar</a>
+        {% endif %}
+        {% if can_delete_post %}
+            <a href="{% url 'post_delete' post.pk %}" class="btn btn-danger">Deletar</a>
+        {% endif %}
+    </div>
+{% endif %}
+
+<hr>
+<h3>Comentários</h3>
+<ul>
+    {% for comment in comments %}
+    <li>
+        <strong>{{ comment.author.username }}</strong> - {{ comment.created_at|date:"d/m/Y H:i" }}
+        <p>{{ comment.text }}</p>
+    </li>
+    {% endfor %}
+</ul>
+
+<!-- Formulário para adicionar comentário -->
+{% if user.is_authenticated %}
+<h4>Adicionar um comentário</h4>
+<form method="POST" action="{% url 'add_comment' post.pk %}">
+    {% csrf_token %}
+    <textarea name="text" rows="3" class="form-control" placeholder="Escreva seu comentário"></textarea>
+    <button type="submit" class="btn btn-primary mt-2">Enviar</button>
+</form>
+{% else %}
+<p><a href="{% url 'login' %}">Faça login</a> para comentar.</p>
+{% endif %}
 {% endblock %}
