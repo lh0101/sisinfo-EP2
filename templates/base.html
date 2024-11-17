@@ -21,7 +21,9 @@
         <h1>F1BLOG</h1>
         <nav>
             <a href="{% url 'posts_list' %}">Home</a>
-            <a href="{% url 'posts_create' %}">Novo Post</a>
+            {% if user.is_authenticated %}
+            <li><a href="{% url 'posts_create' %}">Novo Post</a></li>
+            {% endif %}
         </nav>
         <nav>
             <a href="{% url 'category_list' %}">Categorias</a>

@@ -1,10 +1,15 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>{% if form.instance.pk %}Editar{% else %}Criar{% endif %} Post</h2>
-<form method="POST">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-primary">Salvar</button>
-</form>
+<!-- Verifica se o usuário está autenticado -->
+{% if user.is_authenticated %}
+    <h2>{% if form.instance.pk %}Editar{% else %}Criar{% endif %} Post</h2>
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Salvar</button>
+    </form>
+{% else %}
+    <p>Você precisa estar logado para criar ou editar posts. <a href="{% url 'login' %}">Faça login aqui</a>.</p>
+{% endif %}
 {% endblock %}

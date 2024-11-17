@@ -113,8 +113,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # Onde os arquivos estáticos serão coletados para produção
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]  # Diretório de arquivos estáticos no desenvolvimento
 
 # WhiteNoise configurações
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
