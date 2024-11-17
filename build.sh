@@ -4,7 +4,7 @@ set -o errexit
 
 pip install -r requirements.txt
 
-python manage.py collectstatic --no-input
+
 python manage.py migrate
 # Criar um superusuário automático (substitua com seus dados)
 echo "from django.contrib.auth.models import User; User.objects.create_superuser('admin', 'luiz.piffermarques@usp.br', 'PMR3304')" | python manage.py shell
