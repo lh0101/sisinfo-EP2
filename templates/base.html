@@ -19,6 +19,8 @@
 <body>
     <header>
         <h1>F1BLOG</h1>
+        <li>BEm vindo ao mais novo Blog sobre Fórmula 1 Brasileiro!!!</li>
+        <li>Faça Login para poder criar um post!</li>
         <nav>
             <a href="{% url 'posts_list' %}">Home</a>
             {% if user.is_authenticated %}
